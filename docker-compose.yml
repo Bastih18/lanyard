@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis
+    restart: always
+    container_name: lanyard_redis
+
+  lanyard:
+    build:
+      context: .
+    restart: always
+    container_name: lanyard
+    depends_on:
+      - redis
+    ports:
+      - 4001:4001
+    environment:
+      BOT_TOKEN: ${BOT_TOKEN}
+      REDIS_HOST: redis
