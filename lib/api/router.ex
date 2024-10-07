@@ -43,9 +43,10 @@ defmodule Lanyard.Api.Router do
   get "/" do
     response = %{
       info:
-        "Lanyard provides Discord presences as an API and WebSocket. Find out more here: https://github.com/Phineas/lanyard",
+        "PixelVault operates a self-hosted, customized instance of Lanyard, an open-source tool that provides Discord presences as an API and WebSocket. Find out more here: https://github.com/Phineas/lanyard",
       monitored_user_count: GenRegistry.count(Lanyard.Presence),
-      discord_invite: "https://discord.gg/lanyard"
+      pixelvault_discord_invite: "https://discord.gg/pxlvltco",
+      lanyard_discord_invite: "https://discord.gg/lanyard"
     }
 
     Util.respond(conn, {:ok, response})
