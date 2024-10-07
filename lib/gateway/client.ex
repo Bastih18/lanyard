@@ -205,6 +205,21 @@ defmodule Lanyard.Gateway.Client do
   def handle_event({:presence_update, payload}, state) do
     Lanyard.Metrics.Collector.inc(:counter, :lanyard_presence_updates)
 
+    status = Lanyard.KV.Interface.checkIfExists(payload.data.user.id, "discord_offline")
+    if payload.data.status == :offline do
+      if status == {:ok, false} do
+        # get the current time in unix epoch, and convert it to a string
+        time = DateTime.utc_now() |> DateTime.to_unix()
+        timeAsString = Integer.to_string(time)
+        Lanyard.KV.Interface.set(payload.data.user.id, "discord_offline", timeAsString)
+      end
+    else
+      # check if the key is set, if so, delete it
+      if status == {:ok, true} do
+        Lanyard.KV.Interface.del(payload.data.user.id, "discord_offline")
+      end
+    end
+
     with {:ok, pid} <-
            GenRegistry.lookup(Lanyard.Presence, Integer.to_string(payload.data.user.id)) do
       GenServer.cast(pid, {:sync, %{discord_presence: payload.data}})

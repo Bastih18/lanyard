@@ -17,6 +17,17 @@ defmodule Lanyard.KV.Interface do
     end
   end
 
+  ## returns with true and false
+  def checkIfExists(user_id, key) do
+    case Presence.get_presence(user_id) do
+      {:ok, %{kv: %{^key => _}}} ->
+        {:ok, true}
+
+      _ ->
+        {:ok, false}
+    end
+  end
+
   def set(user_id, key, value) do
     kv = get_all(user_id)
 
